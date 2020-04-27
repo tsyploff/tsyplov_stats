@@ -1,6 +1,6 @@
 
 import numpy as np
-from wolfram_functions import *
+from tsyplov_stats.wolfram_functions import *
 
 class FejerSums():
     
@@ -16,9 +16,9 @@ class FejerSums():
 
     def seasonality_mean(self, ts):
         '''Gives seasonality mean'''
-        length = len(y)//self.s
+        length = len(ts)//self.s
         y = ts[-(length*self.s):]
-        return np.mean(y.reshape(length, s), axis=0)
+        return np.mean(y.reshape(length, self.s), axis=0)
 
     def fourier_coefficients(self, k):
         '''Gives the couple of coefficients (a_k, b_k) of Fourier series in model'''
