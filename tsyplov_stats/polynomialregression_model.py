@@ -31,5 +31,5 @@ class PolynomialRegression(LinearRegression):
 
     def predict(self, h=1):
         '''Gives forecast for h times'''
-        x = np.power(np.arange(len(ts), len(ts) + h), np.arange(self.d).reshape(-1, 1)).transpose()
+        x = np.power(np.arange(len(self.true_values), len(self.true_values) + h), np.arange(self.d + 1).reshape(-1, 1)).transpose()
         return x.dot(self.coef)
