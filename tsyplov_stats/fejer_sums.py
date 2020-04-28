@@ -53,7 +53,7 @@ class FejerSums():
         cos = lambda x: np.cos(2*np.pi*x/self.s)
         sin = lambda x: np.sin(2*np.pi*x/self.s)
 
-        for t in range(len(self.true_values)):
+        for t in range(len(self.true_values), len(self.true_values) + h):
             funs = np.hstack(tuple((self.n - k)*np.array([cos(t), sin(t)])/self.n for k in range(1, self.n)))
             result.append(np.mean(self.bar_y) + self.coef.dot(funs))
             

@@ -102,4 +102,4 @@ def nest_while_list(f, expr, test, m=1, max_iter=1024):
 
 def take_drop(a, n):
     '''gives the tuple of a[:n] and a[n:]'''
-    return a[:n], a[n:]
+    return a[:n].copy(), a[n:].copy()

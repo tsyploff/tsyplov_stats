@@ -1,7 +1,7 @@
 
 import numpy as np
-from wolfram_functions import *
-from linearregression_model import *
+from tsyplov_stats.wolfram_functions import *
+from tsyplov_stats.linearregression_model import *
 
 class AutoRegression():
     '''Ordinary AutoRegression.

@@ -1,6 +1,6 @@
 
 import numpy as np
-from wolfram_functions import *
+from tsyplov_stats.wolfram_functions import *
 
 class LinearRegression():
     '''Ordinary least squares Linear Regression.
