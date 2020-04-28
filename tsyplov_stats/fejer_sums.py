@@ -34,9 +34,10 @@ class FejerSums():
 
         self.fitted_values = []
 
+        cos = lambda x: np.cos(2*np.pi*x/self.s)
+        sin = lambda x: np.sin(2*np.pi*x/self.s)
+
         for t in range(len(ts)):
-            cos = lambda x: np.cos(2*np.pi*x/self.s)
-            sin = lambda x: np.sin(2*np.pi*x/self.s)
             funs = np.hstack(tuple((self.n - k)*np.array([cos(t), sin(t)])/self.n for k in range(1, self.n)))
             self.fitted_values.append(np.mean(self.bar_y) + self.coef.dot(funs))
         
@@ -48,7 +49,44 @@ class FejerSums():
     def predict(self, h=1):
         '''Gives forecast for x using model self'''
         result = []
-        for t in range(len(ts)):
-            funs = np.hstack(tuple((self.n - k)*np.array([np.cos(2*np.pi*t/self.s), np.sin(2*np.pi*t/self.s)])/self.n for k in range(1, self.n)))
+
+        cos = lambda x: np.cos(2*np.pi*x/self.s)
+        sin = lambda x: np.sin(2*np.pi*x/self.s)
+
+        for t in range(len(self.true_values)):
+            funs = np.hstack(tuple((self.n - k)*np.array([cos(t), sin(t)])/self.n for k in range(1, self.n)))
             result.append(np.mean(self.bar_y) + self.coef.dot(funs))
+            
         return np.array(result)
+
+class RecursiveFejerSums():
+    '''Fejer sums for case of several seasonalities'''
+    
+    def __init__(self, n=10, s=[7]):
+        '''Initializes model'''
+        self.n = n #the order of the amount
+        self.s = s #seasonalities
+        self.sigmas = []
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+    
+    def fit(self, ts):
+        '''fits all of models'''
+        self.true_values   = ts
+        self.fitted_values = np.zeros(len(ts))
+        self.residuals     = ts
+
+        for i in self.s:
+            model = FejerSums(self.n, i).fit(self.residuals)
+            self.fitted_values += model.fitted_values
+            self.residuals = model.residuals
+            self.sigmas.append(model)
+
+        return self
+
+    def predict(self, h=1):
+        forecast = np.zeros(h)
+        for model in self.sigmas:
+            forecast += model.predict(h)
+        return forecast
