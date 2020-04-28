@@ -100,3 +100,6 @@ def nest_while_list(f, expr, test, m=1, max_iter=1024):
         itr -= 1
     return np.array(lst)
 
+def take_drop(a, n):
+    '''gives the tuple of a[:n] and a[n:]'''
+    return a[:n], a[n:]
