@@ -2,6 +2,7 @@
 import numpy as np
 from tsyplov_stats.wolfram_functions import *
 from tsyplov_stats.linearregression_model import *
+from sklearn.preprocessing import PolynomialFeatures
 
 class AutoRegression():
     '''Ordinary AutoRegression.
@@ -82,3 +83,41 @@ class AutoRegression():
     def rmse(self):
         '''Gives the root from mean square error'''
         return np.sqrt(self.mse())
+
+class PolynomialAutoRegression(AutoRegression):
+
+    def __init__(self, p=2, d=2):
+        '''Initializes model'''
+        super().__init__(p)
+        self.d = d #input d=1 if you want AutoRegression 
+
+    def fit(self, ts):
+        '''Fits model'''
+        self.series      = ts.copy()
+        self.true_values = ts[self.p:]
+
+        x    = partition(ts[:-1], self.p, 1)
+        x    = PolynomialFeatures(degree=self.d).fit_transform(x)
+        x_tr = x.transpose()
+
+        self.coef          = np.linalg.inv(x_tr.dot(x)).dot(x_tr).dot(self.true_values)
+        self.fitted_values = x.dot(self.coef)
+        self.fitted_values = np.hstack((np.ones(self.p), self.fitted_values))
+        self.fitted_values[:self.p] = np.nan
+        self.residuals     = self.series - self.fitted_values
+
+        return self
+
+    def predict(self, h=1):
+        '''Gives forecast for x using model self'''
+        if self.p != 0:
+            for _ in range(h):
+                ts = self.series[-self.p:][np.newaxis]
+                ts = PolynomialFeatures(degree=self.d).fit_transform(ts)
+                fc = self.coef.dot(ts[0]) #forecast
+                fc = np.array([fc])
+                self.series = np.hstack((self.series, fc))
+            self.series, fc = self.series[:-h], self.series[-h:]
+            return fc
+        else:
+            return np.zeros(h) + self.coef[0]

@@ -53,7 +53,7 @@ class ARMA(AutoRegression):
     def fit(self, ts):
         '''Fits model'''
         self.series      = ts.copy()
-        self.true_values = ts
+        self.true_values = ts[self.p + self.q]
         self.reg_p.fit(ts)
         self.reg_q.fit(self.reg_p.residuals)
 
@@ -62,8 +62,6 @@ class ARMA(AutoRegression):
         self.coef = np.hstack((bias, self.reg_p.coef[1:], self.reg_q.coef[1:]))
 
         self.fitted_values = self.reg_p.fitted_values[self.q:] + self.reg_q.fitted_values
-        self.fitted_values = np.hstack((np.ones(self.p + self.q), self.fitted_values))
-        self.fitted_values[:self.p + self.q] = np.nan
         self.residuals     = self.true_values - self.fitted_values
 
         return self
