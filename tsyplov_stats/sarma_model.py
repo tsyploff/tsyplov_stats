@@ -32,7 +32,11 @@ class SARMA(AutoRegression):
         tmp2 = np.array(tmp2).transpose()
         tmp3 = np.ones(span).reshape(-1, 1)
 
-        sarX = np.hstack((tmp3, tmp2, tmp1[:, :-1]))
+        if self.P == 0:
+        	sarX = np.hstack((tmp3, tmp1[:, :-1]))
+        else:
+        	sarX = np.hstack((tmp3, tmp2, tmp1[:, :-1]))
+        
         sarY = tmp1[:, -1]
 
         self.sar.fit(sarX, sarY)
@@ -45,7 +49,11 @@ class SARMA(AutoRegression):
         tmp2 = np.array(tmp2).transpose()
         tmp3 = np.ones(span).reshape(-1, 1)
 
-        smaX = np.hstack((tmp3, tmp2, tmp1[:, :-1]))
+        if self.Q == 0:
+        	smaX = np.hstack((tmp3, tmp1[:, :-1]))
+        else:
+        	smaX = np.hstack((tmp3, tmp2, tmp1[:, :-1]))
+        
         smaY = tmp1[:, -1]
         
         self.sma.fit(smaX, smaY)
