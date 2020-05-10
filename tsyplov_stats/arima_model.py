@@ -60,4 +60,4 @@ class ARIMA(AutoRegression):
         return self
 
     def predict(self, h=1):
-        return accumulate(self.reg.predict(h), self.end)[1:]
+        return accumulate(self.reg.predict(h), self.end)[self.d:]

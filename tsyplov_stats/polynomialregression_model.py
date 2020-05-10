@@ -17,7 +17,7 @@ class PolynomialRegression(LinearRegression):
     def __init__(self, d=1):
         '''Initializes model'''
         super().__init__()
-        self.d = d         
+        self.d = d 
         
     def fit(self, ts):
         '''Fits model'''
