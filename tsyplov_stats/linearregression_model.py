@@ -34,9 +34,10 @@ class LinearRegression():
         
     def fit(self, x, y):
         '''Fits model'''
+        self.reset_to_default() #model clear
         x_tr = x.transpose()
         self.coef = np.linalg.inv(x_tr.dot(x)).dot(x_tr).dot(y)
-        self.true_values   = y
+        self.true_values   = y.copy()
         self.fitted_values = self.predict(x)
         self.residuals     = self.true_values - self.fitted_values
         return self
@@ -60,3 +61,10 @@ class LinearRegression():
     def rmse(self, x, y):
         '''Gives the root from mean square error'''
         return np.sqrt(self.mse(x, y))
+
+    def reset_to_default(self):
+        self.coef = np.zeros(2)
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        return LinearRegression()

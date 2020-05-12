@@ -47,6 +47,8 @@ class AutoRegression():
 
     def fit(self, ts):
         '''Fits model'''
+        self.reset_to_default() #model clear
+        self.series      = ts.copy()
         self.series      = ts.copy()
         self.true_values = ts[self.p:]
 
@@ -84,6 +86,15 @@ class AutoRegression():
         '''Gives the root from mean square error'''
         return np.sqrt(self.mse())
 
+    def reset_to_default(self):
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        self.series = np.zeros(2)
+        self.coef   = np.zeros(self.p + 1)
+        return AutoRegression(self.p)
+
+
 class PolynomialAutoRegression(AutoRegression):
 
     def __init__(self, p=2, d=2):
@@ -93,6 +104,8 @@ class PolynomialAutoRegression(AutoRegression):
 
     def fit(self, ts):
         '''Fits model'''
+        self.reset_to_default() #model clear
+        self.series      = ts.copy()
         self.series      = ts.copy()
         self.true_values = ts[self.p:]
 
@@ -121,3 +134,11 @@ class PolynomialAutoRegression(AutoRegression):
             return fc
         else:
             return np.zeros(h) + self.coef[0]
+
+    def reset_to_default(self):
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        self.series = np.zeros(2)
+        self.coef   = np.zeros(self.p + 1)
+        return PolynomialAutoRegression(self.p, self.d)

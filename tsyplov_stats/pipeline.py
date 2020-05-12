@@ -10,6 +10,7 @@ class Pipeline():
         self.residuals     = np.zeros(2)
 
     def fit(self, ts):
+        self.reset_to_default() #model clear
         self.true_values = ts.copy()
         self.residuals   = ts.copy()
         
@@ -27,3 +28,9 @@ class Pipeline():
         for model in self.models:
             fc += model.predict(h)
         return fc
+
+    def reset_to_default(self):
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        return Pipeline(self.models)

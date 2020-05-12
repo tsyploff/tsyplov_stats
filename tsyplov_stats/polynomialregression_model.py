@@ -21,6 +21,7 @@ class PolynomialRegression(LinearRegression):
         
     def fit(self, ts):
         '''Fits model'''
+        self.reset_to_default() #model clearing
         x = np.power(np.arange(len(ts)), np.arange(self.d + 1).reshape(-1, 1)).transpose()
         reg = LinearRegression().fit(x, ts)
         self.coef = reg.coef
@@ -33,3 +34,10 @@ class PolynomialRegression(LinearRegression):
         '''Gives forecast for h times'''
         x = np.power(np.arange(len(self.true_values), len(self.true_values) + h), np.arange(self.d + 1).reshape(-1, 1)).transpose()
         return x.dot(self.coef)
+
+    def reset_to_default(self):
+        self.coef = np.zeros(2)
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        return PolynomialRegression(self.d)

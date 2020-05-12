@@ -59,6 +59,7 @@ class SARIMA(AutoRegression):
         self.seasonal_end   = np.zeros(2)
 
     def fit(self, ts):
+        self.reset_to_default() #model clearing
         self.series = ts.copy()
         self.dts, self.start, self.end = diff(ts, self.d)
 
@@ -75,3 +76,22 @@ class SARIMA(AutoRegression):
 
     def predict(self, h=1):
         return accumulate(seasonal_accumulate(self.reg.predict(h), self.seasonal_end, self.s), self.end)[-h:]
+
+    def reset_to_default(self):
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        self.coef          = np.zeros(self.p + self.q + self.P + self.Q + 1)
+
+        self.reg = SARMA(order=(self.p, self.q), seasonal_order=(self.P, self.Q, self.s))
+
+        self.series = np.zeros(2)
+        
+        self.dts   = np.zeros(2)
+        self.start = np.zeros(2)
+        self.end   = np.zeros(2)
+        
+        self.seasonal_dts   = np.zeros(2)
+        self.seasonal_start = np.zeros(2)
+        self.seasonal_end   = np.zeros(2)
+        return SARIMA(order=(self.p, self.d, self.q), seasonal_order=(self.P, self.D, self.Q, self.s))

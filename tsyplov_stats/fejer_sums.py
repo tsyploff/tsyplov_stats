@@ -2,6 +2,12 @@
 import numpy as np
 from tsyplov_stats.wolfram_functions import *
 
+def seasonality_mean(s, ts):
+    '''Gives seasonality mean'''
+    length = len(ts)//s
+    y = ts[-(length*s):]
+    return np.mean(y.reshape(length, s), axis=0)
+
 class FejerSums():
     
     def __init__(self, n=10, s=7):
@@ -14,12 +20,6 @@ class FejerSums():
         self.fitted_values = np.zeros(2)
         self.residuals     = np.zeros(2)
 
-    def seasonality_mean(self, ts):
-        '''Gives seasonality mean'''
-        length = len(ts)//self.s
-        y = ts[-(length*self.s):]
-        return np.mean(y.reshape(length, self.s), axis=0)
-
     def fourier_coefficients(self, k):
         '''Gives the couple of coefficients (a_k, b_k) of Fourier series in model'''
         a = 2*self.bar_y.dot(np.cos(k*np.linspace(0, 2*np.pi, self.s, endpoint=False)))/self.s
@@ -28,7 +28,9 @@ class FejerSums():
         
     def fit(self, ts):
         '''Fits model'''
-        self.bar_y = self.seasonality_mean(ts)
+        self.reset_to_default() #model clear
+        self.series      = ts.copy()
+        self.bar_y = seasonality_mean(self.s, ts)
         self.coef  = np.hstack(tuple(self.fourier_coefficients(k) for k in range(1, self.n)))
         self.true_values = ts
 
@@ -59,6 +61,15 @@ class FejerSums():
             
         return np.array(result)
 
+    def reset_to_default(self):
+        self.bar_y = np.zeros(2)
+        self.coef  = np.zeros(self.n)
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        return FejerSums(self.n, self.s)
+
+
 class RecursiveFejerSums():
     '''Fejer sums for case of several seasonalities'''
     
@@ -73,9 +84,10 @@ class RecursiveFejerSums():
     
     def fit(self, ts):
         '''fits all of models'''
-        self.true_values   = ts
+        self.reset_to_default() #model clear
+        self.true_values   = ts.copy()
         self.fitted_values = np.zeros(len(ts))
-        self.residuals     = ts
+        self.residuals     = ts.copy()
 
         for i in self.s:
             model = FejerSums(self.n, i).fit(self.residuals)
@@ -90,3 +102,10 @@ class RecursiveFejerSums():
         for model in self.sigmas:
             forecast += model.predict(h)
         return forecast
+
+    def reset_to_default(self):
+        self.sigmas = []
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        return RecursiveFejerSums(self.n, self.s)

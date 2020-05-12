@@ -1,5 +1,6 @@
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 def partition(lst, n, d):
     '''Partitions list into sublists of length n with offset d.
@@ -103,3 +104,18 @@ def nest_while_list(f, expr, test, m=1, max_iter=1024):
 def take_drop(a, n):
     '''gives the tuple of a[:n] and a[n:]'''
     return a[:n].copy(), a[n:].copy()
+
+def list_line_plot(data, plot_legends=0, image_size=(10, 6)):
+    '''Build plot as ListLinePlot in Wolfram'''
+    fig, ax = plt.subplots(figsize=image_size)
+
+    if plot_legends == 0:
+        plot_legends = [str(i) for i in range(len(data))]
+    
+    i = 0
+    for x, y in data:
+        ax.plot(x, y, label=plot_legends[i])
+        i += 1
+
+    plt.legend()
+    plt.show()

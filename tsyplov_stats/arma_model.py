@@ -52,6 +52,7 @@ class ARMA(AutoRegression):
 
     def fit(self, ts):
         '''Fits model'''
+        self = self.reset_to_default() #model clear
         self.series      = ts.copy()
         self.true_values = ts[self.p + self.q]
         self.reg_p.fit(ts)
@@ -91,3 +92,13 @@ class ARMA(AutoRegression):
         k = self.p + self.q + 1
         n = len(self.true_values)
         return 2*k + n*(np.log(2*np.pi*self.mse()) + 1)
+
+    def reset_to_default(self):
+        self.reg_p = AutoRegression(self.p)
+        self.reg_q = AutoRegression(self.q)
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        self.series = np.zeros(2)
+        self.coef   = np.zeros(self.p + self.q + 1)
+        return ARMA(self.p, self.q)

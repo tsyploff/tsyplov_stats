@@ -47,6 +47,7 @@ class ARIMA(AutoRegression):
         self.end    = np.zeros(2)
 
     def fit(self, ts):
+        self.reset_to_default() #model clear
         self.series = ts.copy()
         self.dts, self.start, self.end = diff(ts, self.d)
         
@@ -60,4 +61,18 @@ class ARIMA(AutoRegression):
         return self
 
     def predict(self, h=1):
-        return accumulate(self.reg.predict(h), self.end)[self.d:]
+        return accumulate(self.reg.predict(h), self.end)[-h:]
+
+    def reset_to_default(self):
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        
+        self.coef = np.zeros(self.p + self.q + 1)
+        self.reg  = ARMA(self.p, self.q)
+
+        self.series = np.zeros(2)
+        self.dts    = np.zeros(2)
+        self.start  = np.zeros(2)
+        self.end    = np.zeros(2)
+        return ARIMA(self.p, self.d, self.q)

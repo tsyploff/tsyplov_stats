@@ -24,6 +24,8 @@ class SARMA(AutoRegression):
         self.sma = LinearRegression()
 
     def fit(self, ts):
+        self.reset_to_default() #model clearing
+
         span = len(ts) - max(self.P*self.s, self.p)
 
         tmp1 = partition(ts, 1 + self.p, 1)
@@ -89,3 +91,16 @@ class SARMA(AutoRegression):
 
         return fc
         
+    def reset_to_default(self):
+        self.true_values   = np.zeros(2)
+        self.fitted_values = np.zeros(2)
+        self.residuals     = np.zeros(2)
+        self.coef          = np.zeros(self.p + self.q + self.P + self.Q + 1)
+
+        self.sar = LinearRegression()
+        self.sma = LinearRegression()
+
+        order = self.p, self.q
+        seasonal_order = self.P, self.Q, self.s
+        
+        return SARMA(order, seasonal_order)
