@@ -49,7 +49,6 @@ class AutoRegression():
         '''Fits model'''
         self.reset_to_default() #model clear
         self.series      = ts.copy()
-        self.series      = ts.copy()
         self.true_values = ts[self.p:]
 
         x    = partition(ts[:-1], self.p, 1)
@@ -105,7 +104,6 @@ class PolynomialAutoRegression(AutoRegression):
     def fit(self, ts):
         '''Fits model'''
         self.reset_to_default() #model clear
-        self.series      = ts.copy()
         self.series      = ts.copy()
         self.true_values = ts[self.p:]
 

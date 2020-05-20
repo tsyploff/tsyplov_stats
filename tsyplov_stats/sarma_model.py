@@ -80,14 +80,14 @@ class SARMA(AutoRegression):
         self.residuals, residuals_fc = take_drop(self.residuals, -h)
 
         for i in range(h):
-            tmp1 = self.fitted_values[-self.p:]
-            tmp2 = [self.fitted_values[-(i * self.s)] for i in range(1, 1 + self.P)][::-1]
+            tmp1 = self.true_values[-self.p:]
+            tmp2 = [self.true_values[-(i * self.s)] for i in range(1, 1 + self.P)][::-1]
             tmp2 = np.array(tmp2)
             tmp3 = np.ones(1)
             vect = np.hstack((tmp3, tmp2, tmp1))
-            self.fitted_values = np.hstack((self.fitted_values, vect.dot(self.sar.coef) + residuals_fc[i]))
+            self.true_values = np.hstack((self.true_values, vect.dot(self.sar.coef) + residuals_fc[i]))
 
-        self.fitted_values, fc = take_drop(self.fitted_values, -h)	
+        self.true_values, fc = take_drop(self.true_values, -h)	
 
         return fc
         
